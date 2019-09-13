@@ -50,13 +50,13 @@ module Func
 
     function hamiltonian(n, s)
 
-        return (energyB(n) + energyS(s)) / Const.dimB / Const.dimS
+        return (energyB(n) + energyS(s)) / (Const.dimB + Const.dimS)
     end
 
     function squarehamiltonian(n, s)
 
         if energyS(s) < 0
-            c = (1.0 / 2.0 / Const.dimB / Const.dimS)^2
+            c = (1.0 / 2.0 / (Const.dimB + Const.dimS))^2
         else
             c = 0.0
         end

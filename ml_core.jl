@@ -28,6 +28,7 @@ module MLcore
         (weight, biasB, biasS, η) = network
         s = ones(Float32, Const.dimS)
         energy = 0.0
+        energyB = 0.0
         squareenergy = 0.0
         dweight_h2 = zeros(Float32, Const.dimB, Const.dimS)
         dweight_h = zeros(Float32, Const.dimB, Const.dimS)
@@ -48,6 +49,7 @@ module MLcore
                 e = Func.hamiltonian(n, s)
                 e2 = Func.squarehamiltonian(n, s)
                 energy += e
+                energyB += Func.energyB(n)
                 squareenergy += e2
                 dweight_h2 +=  transpose(s) .* n .* e2
                 dweight_h +=  transpose(s) .* n .* e
@@ -61,6 +63,7 @@ module MLcore
             end
         end
         energy /= Const.iters_num
+        energyB /= Const.iters_num
         squareenergy /= Const.iters_num
         dweight_h2 /= Const.iters_num
         dweight_h /= Const.iters_num
@@ -82,7 +85,7 @@ module MLcore
         ((2.0 + η) * energy - η * ϵ) * (dbiasS_h - energy * dbiasS)
         diff_η = -(energy - ϵ)^2 / 2.0
 
-        return error, energy, dispersion, 
+        return error, energy, energyB, dispersion, 
         diff_weight, diff_biasB, diff_biasS, diff_η
     end
 end

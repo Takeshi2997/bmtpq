@@ -4,6 +4,13 @@ include("./initialize.jl")
 include("./functions.jl")
 using .Const, .MLcore, .Init, .Func, LinearAlgebra, Serialization
 
+# Make data file
+dirname = "./data"
+filename = dirname * "/param.dat"
+subfilename = dirname * "/subparam.dat"
+rm(dirname, force=true, recursive=true)
+mkdir(dirname)
+
 # Initialize weight, bias and η
 weight = Init.weight(Const.dimB, Const.dimS)
 wmoment = zeros(Float32, Const.dimB, Const.dimS)
@@ -17,24 +24,32 @@ bvelocityS = zeros(Float32, Const.dimS)
 η = -1.0
 ηm = 0.0
 ηv = 0.0
-ϵ = 1.0 / Const.dimB / Const.dimS
+ϵ = 1.0 / (Const.dimB + Const.dimS)
 
 # Define network
 network = (weight, biasB, biasS, η)
 
+# Reed file
+# network = open(deserialize, filename)
+
 # Learning
 f = open("error.txt", "w")
 for it in 1:Const.it_num
-    error, energy, dispersion, dweight, dbiasB, 
+    error, energy, energyB, dispersion, dweight, dbiasB, 
     dbiasS, dη = MLcore.diff_error(network, ϵ)
-    write(f, string(it))
-    write(f, "\t")
-    write(f, string(error))
-    write(f, "\t")
-    write(f, string(energy * Const.dimB * Const.dimS))
-    write(f, "\t")
-    write(f, string(dispersion))
-    write(f, "\n")
+
+    if (it - 1) % 100 == 0 
+        write(f, string(it))
+        write(f, "\t")
+        write(f, string(error))
+        write(f, "\t")
+        write(f, string(energy * (Const.dimB + Const.dimS)))
+        write(f, "\t")
+        write(f, string(energyB))
+        write(f, "\t")
+        write(f, string(dispersion))
+        write(f, "\n")
+    end
 
     # SGD
 #    global weight += Const.lr * dweight
@@ -72,4 +87,9 @@ end
 
 close(f)
 
+subparam = (wmoment, wvelocity, bmomentB, bvelocityB,
+            bmomentS, bvelocityS, ηm, ηv)
+
+open(io -> serialize(io, network), filename, "w")
+open(io -> serialize(io, subparam), subfilename, "w")
 

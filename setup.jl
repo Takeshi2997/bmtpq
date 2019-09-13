@@ -29,8 +29,8 @@ module Const
     # Repeat Number
     burnintime = 10
     iters_num = 200
-    it_num = 20000
+    it_num = 500000
 
     # Learning Rate
-    lr = 1.0 * 10^(-3)
+    lr = 1.0 * 10^(-4)
 end
