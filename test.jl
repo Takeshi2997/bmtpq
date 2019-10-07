@@ -4,9 +4,12 @@ include("./initialize.jl")
 include("./functions.jl")
 using .Const, .MLcore, .Init, .Func, LinearAlgebra, Serialization
 
-n = [1 0 0 1 1 1 0 0 1]
-s = [-0.5 0.5]
-e = Func.hamiltonian(n, s)
-h2 = Func.squarehamiltonian(n, s)
-println(e^2)
-println(h2)
+dirname = "./data"
+
+for itemperature in 1:100
+
+    temperature = 0.01 * itemperature
+    filename = dirname * "/param_at_" * lpad(itemperature, 3, "0") *".dat"
+   
+    println(filename)
+end

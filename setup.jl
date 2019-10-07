@@ -20,17 +20,17 @@ module Const
     end
 
     # System Size
-    dimB = 500
+    dimB = 100
     dimS = 2
 
     # System Param
     ω = 0.1
 
     # Repeat Number
-    burnintime = 10
+    burnintime = 100
     iters_num = 200
-    it_num = 500000
+    it_num = 5000
 
     # Learning Rate
-    lr = 1.0 * 10^(-4)
+    lr = 1.0 * 10^(-2)
 end

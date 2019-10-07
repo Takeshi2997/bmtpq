@@ -5,7 +5,7 @@ module Init
 
     function weight(i, j)
 
-        return -ones(Float32, i, j)
+        return ones(Float32, i, j)
     end
 
     function bias(i)
