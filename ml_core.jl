@@ -6,8 +6,9 @@ module MLcore
     function diff_error(network, ϵ)
 
         (weight, biasB, biasS, η) = network
-        s = rand([-1.0, 1.0], Const.dimS)
+        n = rand([0.0, 1.0], Const.dimB)
         energy = 0.0
+        energyS = 0.0
         energyB = 0.0
         squareenergy = 0.0
         dweight_h2 = zeros(Float32, Const.dimB, Const.dimS)
@@ -21,14 +22,15 @@ module MLcore
         dbiasS = zeros(Float32, Const.dimS)
 
         for i in 1:Const.iters_num+Const.burnintime
-            activationS = weight * s .+ biasB
-            n = Func.updateB(activationS)
             activationB = transpose(n) * weight .+ biasS
             s = Func.updateS(activationB)
+            activationS = weight * s .+ biasB
+            n = Func.updateB(activationS)
             if i > Const.burnintime
                 e = Func.hamiltonian(n, s)
                 e2 = Func.squarehamiltonian(n, s)
                 energy += e
+                energyS += Func.energyS(s)
                 energyB += Func.energyB(n)
                 squareenergy += e2
                 dweight_h2 +=  transpose(s) .* n .* e2
@@ -43,6 +45,7 @@ module MLcore
             end
         end
         energy /= Const.iters_num
+        energyS /= Const.iters_num
         energyB /= Const.iters_num
         squareenergy /= Const.iters_num
         dweight_h2 /= Const.iters_num
@@ -64,14 +67,14 @@ module MLcore
         diff_biasS = η * (dbiasS_h2 - squareenergy * dbiasS_h) + 
         2.0 * ((1.0 - η) * energy - ϵ) * (dbiasS_h - energy * dbiasS)
 
-        return error, energy, energyB, dispersion, 
+        return error, energy, energyS, energyB, dispersion, 
         diff_weight, diff_biasB, diff_biasS
     end
 
     function forward(network)
 
         (weight, biasB, biasS, η) = network
-        s = rand([-1.0, 1.0], Const.dimS)
+        s = [1.0, 1.0]
         energyS = 0.0
         energyB = 0.0
         num = 10000

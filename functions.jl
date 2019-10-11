@@ -55,7 +55,7 @@ module Func
 
     function energyS(s)
 
-        return prod(s)
+        return -Const.J * prod(s)
     end
 
     function hamiltonian(n, s)

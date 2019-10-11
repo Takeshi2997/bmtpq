@@ -8,6 +8,7 @@ module Const
 
         # System Param
         ω::Float32
+        J::Float32
 
         # Repeat Number
         burnintime::Int64
@@ -20,17 +21,18 @@ module Const
     end
 
     # System Size
-    dimB = 100
+    dimB = 200
     dimS = 2
 
     # System Param
-    ω = 0.1
+    ω = 0.001
+    J = 0.001
 
     # Repeat Number
     burnintime = 100
     iters_num = 200
-    it_num = 5000
+    it_num = 2000
 
     # Learning Rate
-    lr = 1.0 * 10^(-2)
+    lr = 1.0 * 10^(-3)
 end

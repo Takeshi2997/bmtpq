@@ -7,9 +7,9 @@ using .Const, .MLcore, .Init, .Func, LinearAlgebra, Serialization
 dirname = "./data"
 
 f = open("energy_data.txt", "w")
-for itemperature in 1:100
+for iϵ in 1:10
 
-    filename = dirname * "/param_at_" * lpad(itemperature, 3, "0") * ".dat"
+    filename = dirname * "/param_at_" * lpad(iϵ, 3, "0") * ".dat"
     network = open(deserialize, filename)
 
     energyS, energyB = MLcore.forward(network)
@@ -22,7 +22,7 @@ for itemperature in 1:100
     write(f, "\t")
     write(f, string(energyB))
     write(f, "\t")
-    write(f, string(-tanh(1.0/temperature)))
+    write(f, string(-Const.J * tanh(Const.J/temperature)))
     write(f, "\n")
 end
 

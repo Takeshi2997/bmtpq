@@ -1,17 +1,16 @@
 include("./setup.jl")
-using .Const, LinearAlgebra, Serialization
+include("./functions.jl")
 
-function func(t)
-
-    return Const.dimB * Const.ω / (exp(Const.ω / t) + 1.0)
-end
+using .Const, .Func, LinearAlgebra, Serialization
 
 f = open("energy-temperature.txt", "w")
-for it in 1:1000
-    t = it * 0.01
-    write(f, string(t))
+for iϵ in 1:600
+    ϵ = iϵ * 0.0001
+    write(f, string(ϵ))
     write(f, "\t")
-    write(f, string(func(t)))
+    write(f, string(Func.retranslate(ϵ)))
+    write(f, "\t")
+    write(f, string(-Const.J * tanh(Const.J / Func.retranslate(ϵ))))
     write(f, "\n")
 end
 close(f)
