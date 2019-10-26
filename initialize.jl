@@ -5,7 +5,7 @@ module Init
 
     function weight(i, j)
 
-        return rand([1.0, 0.0, -1.0], i, j)
+        return ones(Float32, i, j) * 10^(-8)
     end
 
     function bias(i)

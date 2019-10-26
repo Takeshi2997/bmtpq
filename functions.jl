@@ -55,12 +55,23 @@ module Func
 
     function energyS(s)
 
-        return -Const.J * prod(s)
+        sum = 0.0
+        for ix in 1:2:Const.dimS-1
+            sum += s[ix] * s[ix + 1]
+        end
+        return -Const.J * sum
     end
 
     function hamiltonian(n, s)
 
-        return energyB(n) + energyS(s)
+        w = ones(Const.dimB, Const.dimS)
+        sumS = 0.0
+        for ix in 1:2:Const.dimS-1
+            sumS += s[ix] * s[ix + 1]
+        end
+        energyS = -Const.J * sumS
+ 
+        return energyB(n) + energyS + Const.δ * transpose(n) * w * s
     end
 
     function squarehamiltonian(n, s)

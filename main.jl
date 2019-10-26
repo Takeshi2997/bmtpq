@@ -12,7 +12,7 @@ mkdir(dirname)
 f = open("error.txt", "w")
 for iϵ in 1:1
 
-    ϵ = 0.06
+    ϵ = 0.04
 
     filename = dirname * "/param_at_" * lpad(iϵ, 3, "0") * ".dat"
 
@@ -26,13 +26,13 @@ for iϵ in 1:1
     biasS = Init.bias(Const.dimS)
     bmomentS = zeros(Float32, Const.dimS)
     bvelocityS = zeros(Float32, Const.dimS)
-    η = 0.1
     error = 0.0
     energyS = 0.0
     energyB = 0.0
+    lr = Const.lr
 
     # Define network
-    network = (weight, biasB, biasS, η)
+    network = (weight, biasB, biasS)
     
     # Learning
     for it in 1:Const.it_num
@@ -40,15 +40,15 @@ for iϵ in 1:1
         dbiasS = MLcore.diff_error(network, ϵ)
 
         # Adam
-        lr_t = Const.lr * sqrt(1.0 - 0.999^it) / (1.0 - 0.9^it)
-        wmoment += (1 - 0.9) * (dweight - wmoment)
-        wvelocity += (1 - 0.999) * (dweight.^2 - wvelocity)
+        lr_t = lr * sqrt(1.0 - 0.999^it) / (1.0 - 0.9^it)
+        wmoment += (1.0 - 0.9) * (dweight - wmoment)
+        wvelocity += (1.0 - 0.999) * (dweight.^2 - wvelocity)
         weight -= lr_t * wmoment ./ (sqrt.(wvelocity) .+ 1.0 * 10^(-7))
-        bmomentB += (1 - 0.9) * (dbiasB - bmomentB)
-        bvelocityB += (1 - 0.999) * (dbiasB.^2 - bvelocityB)
+        bmomentB += (1.0 - 0.9) * (dbiasB - bmomentB)
+        bvelocityB += (1.0 - 0.999) * (dbiasB.^2 - bvelocityB)
         biasB -= lr_t * bmomentB ./ (sqrt.(bvelocityB) .+ 1.0 * 10^(-7))
-        bmomentS += (1 - 0.9) * (dbiasS - bmomentS)
-        bvelocityS += (1 - 0.999) * (dbiasS.^2 - bvelocityS)
+        bmomentS += (1.0 - 0.9) * (dbiasS - bmomentS)
+        bvelocityS += (1.0 - 0.999) * (dbiasS.^2 - bvelocityS)
         biasS -= lr_t * bmomentS ./ (sqrt.(bvelocityS) .+ 1.0 * 10^(-7))
 
         write(f, string(it))
@@ -60,9 +60,11 @@ for iϵ in 1:1
         write(f, string(energyS))
         write(f, "\t")
         write(f, string(energyB))
+        write(f, "\t")
+        write(f, string(energyB + energyS))
         write(f, "\n")
-    
-        network = (weight, biasB, biasS, η)
+
+        network = (weight, biasB, biasS)
     end
 
     # Write error
